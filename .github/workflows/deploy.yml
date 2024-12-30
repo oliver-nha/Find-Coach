@@ -35,7 +35,7 @@ jobs:
 
       # Step 5: Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       # Step 6: Build the site
       - name: Build site
