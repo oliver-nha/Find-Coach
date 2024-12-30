@@ -1,0 +1,49 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        default: 'main'
+        required: true
+        type: string
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Log the Node.js version before setup (for debugging)
+      - name: Check system Node.js version
+        run: node --version || echo "Node.js not installed"
+
+      # Step 2: Set up Node.js with a supported version (17 or higher)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Ensure compatibility with structuredClone
+          cache: 'npm'
+
+      # Step 3: Check the Node.js version after setup
+      - name: Verify Node.js version
+        run: node --version
+
+      # Step 4: Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 5: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 6: Build the site
+      - name: Build site
+        run: npm run build
+
+      # Step 7: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist # Update this to your build output directory
