@@ -48,18 +48,14 @@ const coachDetailsLink = computed(() => {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .coach-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
 .coach-info h3 {
   margin: 0;
-
   color: #1f2937;
 }
-
 .rate {
   color: #0d9488;
   font-size: 1.125rem;
