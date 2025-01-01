@@ -1,8 +1,8 @@
 export default {
-  getCoaches : (state) => {
-    return state.coaches
+  getCoaches: (state) => {
+    return state.coaches;
   },
-  hasCoaches : (state) => {
-    return state.coaches && state.coaches.length > 0
-  }
-}
+  hasCoaches: (state) => {
+    return state.coaches && state.coaches.length > 0;
+  },
+};

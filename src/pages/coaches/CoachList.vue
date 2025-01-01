@@ -66,7 +66,7 @@ const filteredCoaches = computed(() => {
 .controls {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin: 2rem 0;
 }
 
 .coaches-grid {
