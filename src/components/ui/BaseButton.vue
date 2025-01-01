@@ -16,6 +16,7 @@ defineProps({
     default: null
   }
 })
+
 </script>
 
 <template>
@@ -53,6 +54,27 @@ a,button {
 
 .flat:hover {
   background-color: #99f6e4;
+}
+
+.submit-btn {
+  background-color: #6200ee;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #4500b5;
+  transform: scale(1.05);
+}
+
+.submit-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.3);
 }
 </style>
 
