@@ -20,7 +20,7 @@ const coachContactLink = computed(() => {
   return `${route.path}/${props.id}/contact`;
 })
 const coachDetailsLink = computed(() => {
-  return `/${route.path}/${props.id}`;
+  return `${route.path}/${props.id}`;
 })
 </script>
 
