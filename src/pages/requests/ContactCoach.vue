@@ -1,62 +1,55 @@
 <script setup>
 import { reactive, ref } from 'vue';
-import { useRequestsStore } from '@/stores/requests/index.js'
-import { useRoute, useRouter } from 'vue-router'
 
-// Reactive state to store form data
+import { useRoute, useRouter } from 'vue-router'
+import { useRequestsStore } from '@/stores/requests/index.js'
+
 const data = reactive({
   email: '',
   message: '',
 });
-const requestStore = useRequestsStore();
+
+
 const route = useRoute();
 const router = useRouter();
-// Reactive state for overall form validity
+const requestStore = useRequestsStore();
+console.log(requestStore.requests);
 const formIsValid = ref(true);
 
-// Form submission logic
 const submitForm = () => {
   validateForm();
 
-  // If form is not valid, stop submission
   if (!formIsValid.value) {
-    console.warn('Form is invalid. Please fix the errors!');
     return;
   }
 
-  // Submit the form data (e.g., to an API or parent component)
+  // Get the parent route's ID parameter since this is a nested route
+  const coachId = route.params.id;
   requestStore.addRequest({
     message: data.message,
     email: data.email,
-    coachId: route.params.id
+    coachId: coachId
   });
 
   router.replace('/coaches');
 };
 
-// Validation logic
 const validateForm = () => {
   formIsValid.value = true;
 
-  // Validate email
   if (!data.email || !isValidEmail(data.email)) {
     formIsValid.value = false;
-    console.error('Invalid email');
   }
 
-  // Validate message
   if (!data.message.trim()) {
     formIsValid.value = false;
-    console.error('Message cannot be empty');
   }
 };
 
-// Helper function to validate email format
 const isValidEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 </script>
-
 <template>
   <form @submit.prevent="submitForm">
     <div class="form-control" :class="{ 'invalid': !formIsValid && !data.email }">

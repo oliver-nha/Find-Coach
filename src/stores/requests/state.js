@@ -1,4 +1,3 @@
 export default () => ({
-  requests: []
-
+  requests: [], // Initial state
 });
