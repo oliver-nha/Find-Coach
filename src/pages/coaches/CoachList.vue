@@ -4,9 +4,12 @@ import CoachItem from '@/components/coaches/CoachItem.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import CoachFilter from '@/components/coaches/CoachFilter.vue'
-import { computed, reactive } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 
-const coachesStore = useCoachesStore()
+const coachesStore = useCoachesStore();
+onMounted(() => {
+  coachesStore.loadCoaches();
+});
 const activeFilters = reactive({
   frontend: true,
   backend: true,
@@ -28,6 +31,10 @@ const filteredCoaches = computed(() => {
     )
   })
 })
+
+const loadCoaches = () => {
+  coachesStore.loadCoaches();
+}
 </script>
 
 <template>
@@ -36,7 +43,7 @@ const filteredCoaches = computed(() => {
     <section class="coaches-section">
       <base-card>
         <div class="controls">
-          <base-button mode="outline">Refresh</base-button>
+          <base-button mode="outline" @click="loadCoaches">Refresh</base-button>
           <base-button link to="/register" mode="flat">Register as Coach</base-button>
         </div>
         <div v-if="filteredCoaches.length > 0" class="coaches-grid">
