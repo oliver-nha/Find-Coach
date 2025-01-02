@@ -20,4 +20,5 @@ export default () => ({
     },
   ],
   userId: 'c3',
+  lastFetch: null,
 });

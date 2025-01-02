@@ -12,21 +12,16 @@ export default {
       body: JSON.stringify(coachData),
     });
 
-
-    // const responseData = await response.json();
-    // if(!response.ok) {
-    //   // error...
-    //   const error = new Error(responseData.message || 'Failed to fetch');
-    //   throw error;
-    // }
-
     this.coaches.push({
       id: this.userId,
       ...coachData
     });
   },
-  async loadCoaches() {
-    const response = await fetch(`https://find-coach-c386c-default-rtdb.asia-southeast1.firebasedatabase.app/coaches.jso`);
+  async loadCoaches(forceRefresh = false) {
+    if(!forceRefresh && !this.shouldUpdate) {
+      return;
+    }
+    const response = await fetch(`https://find-coach-c386c-default-rtdb.asia-southeast1.firebasedatabase.app/coaches.json`);
     const responseData = await response.json();
     if(!response.ok) {
       // error...
@@ -46,5 +41,10 @@ export default {
       coaches.push(coach);
     }
     this.coaches = coaches;
+
+    this.setFetchTimestamp();
+  },
+  setFetchTimestamp() {
+    this.lastFetch = new Date().getTime();
   },
 };

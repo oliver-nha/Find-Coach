@@ -1,10 +1,16 @@
 <template>
+  <base-dialog :show="!!error" title="An error occurred!"  @close="error = null">
+    <p>{{ error }}</p>
+  </base-dialog>
   <section>
     <base-card>
       <header>
         <h2>Requests Received</h2>
       </header>
-      <ul v-if="store.hasRequests">
+      <div v-if="isLoading">
+        <base-spinner />
+      </div>
+      <ul v-else-if="!isLoading &&  store.hasRequests">
         <request-item
           v-for="req in store.getRequests"
           :key="req.id"
@@ -22,10 +28,26 @@
 
 import RequestItem from '@/components/requests/RequestItem.vue'
 import { useRequestsStore } from '@/stores/requests/index.js'
+import { onMounted, ref } from 'vue'
+import BaseDialog from '@/components/ui/BaseDialog.vue'
+import BaseSpinner from '@/components/ui/BaseSpinner.vue'
 
 const store = useRequestsStore();
+const isLoading = ref(false);
+const error = ref(null);
+const loadRequests = async () => {
+  isLoading.value = true;
+  try{
+    await store.loadRequests();
+  } catch (err) {
+    error.value = err.message || 'Something went wrong!';
+  }
+  isLoading.value = false;
+}
 
-
+onMounted(() => {
+  loadRequests();
+})
 </script>
 
 <style scoped>

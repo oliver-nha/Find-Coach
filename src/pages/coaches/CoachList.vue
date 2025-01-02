@@ -5,7 +5,7 @@ import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import CoachFilter from '@/components/coaches/CoachFilter.vue'
-import { computed, handleError, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import BaseDialog from '@/components/ui/BaseDialog.vue'
 
 const coachesStore = useCoachesStore();
@@ -20,9 +20,13 @@ const error = ref(null);
 
 // Load coaches on component mount
 onMounted(async () => {
+  isLoading.value = true;
   await loadCoaches();
   isLoading.value = false;
 });
+onUnmounted(() =>{
+  coachesStore.setFetchTimestamp();
+})
 
 const setFilter = (updatedFilters) => {
   Object.assign(activeFilters, updatedFilters);
@@ -36,10 +40,10 @@ const filteredCoaches = computed(() =>
   )
 );
 
-const loadCoaches = async () => {
+const loadCoaches = async (refresh = false) => {
   isLoading.value = true;
   try {
-    await coachesStore.loadCoaches();
+    await coachesStore.loadCoaches(refresh);
   } catch (err) {
     error.value = err.message || 'Something went wrong!';
   }
@@ -49,29 +53,46 @@ const loadCoaches = async () => {
 </script>
 
 <template>
-  <base-dialog :show="!!error" title="An error occurred!"  @close="error = null">
- <p>{{ error }}</p>
+  <base-dialog
+    :show="!!error"
+    title="An error occurred!"
+    @close="error = null"
+  >
+    <p>{{ error }}</p>
   </base-dialog>
+
   <div class="container">
-    <!-- Filter Section -->
     <coach-filter @change-filter="setFilter" />
 
-    <!-- Coaches Section -->
     <section class="coaches-section">
       <base-card>
-        <!-- Controls -->
         <div class="controls">
-          <base-button mode="outline" @click="loadCoaches">Refresh</base-button>
-          <base-button v-if="!isLoading && !coachesStore.hasCoaches" link to="/register" mode="flat">Register as Coach</base-button>
+          <base-button
+            mode="outline"
+            @click="loadCoaches(true)"
+            :disabled="isLoading"
+          >
+            {{ isLoading ? 'Loading...' : 'Refresh' }}
+          </base-button>
+
+          <base-button
+            v-if="!isLoading && !coachesStore.hasCoaches"
+            link
+            to="/register"
+            mode="flat"
+          >
+            Register as Coach
+          </base-button>
         </div>
 
-        <!-- Loading Spinner -->
-        <div v-if="isLoading">
+        <div v-if="isLoading" class="spinner-container">
           <base-spinner />
         </div>
 
-        <!-- Filtered Coaches -->
-        <div v-else-if="coachesStore.hasCoaches && !isLoading" class="coaches-grid">
+        <div
+          v-else-if="coachesStore.hasCoaches"
+          class="coaches-grid"
+        >
           <coach-item
             v-for="coach in filteredCoaches"
             :key="coach.id"
@@ -82,8 +103,10 @@ const loadCoaches = async () => {
             :areas="coach.areas"
           />
         </div>
-        <!-- Fallback: No Coaches Found -->
-        <h3 v-else class="no-coaches">No coaches found.</h3>
+
+        <h3 v-else class="no-coaches">
+          No coaches found.
+        </h3>
       </base-card>
     </section>
   </div>
