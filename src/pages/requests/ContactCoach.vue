@@ -82,7 +82,8 @@ const isValidEmail = (email) => {
       <base-button mode="submit-btn">Submit</base-button>
     </div>
   </form>
-</template><style scoped>
+</template>
+<style scoped>
 /* General form styling */
 form {
   max-width: 500px;

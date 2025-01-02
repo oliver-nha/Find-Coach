@@ -53,62 +53,64 @@ const loadCoaches = async (refresh = false) => {
 </script>
 
 <template>
-  <base-dialog
-    :show="!!error"
-    title="An error occurred!"
-    @close="error = null"
-  >
-    <p>{{ error }}</p>
-  </base-dialog>
+  <div>
+    <base-dialog
+      :show="!!error"
+      title="An error occurred!"
+      @close="error = null"
+    >
+      <p>{{ error }}</p>
+    </base-dialog>
 
-  <div class="container">
-    <coach-filter @change-filter="setFilter" />
+    <div class="container">
+      <coach-filter @change-filter="setFilter" />
 
-    <section class="coaches-section">
-      <base-card>
-        <div class="controls">
-          <base-button
-            mode="outline"
-            @click="loadCoaches(true)"
-            :disabled="isLoading"
+      <section class="coaches-section">
+        <base-card>
+          <div class="controls">
+            <base-button
+              mode="outline"
+              @click="loadCoaches(true)"
+              :disabled="isLoading"
+            >
+              {{ isLoading ? 'Loading...' : 'Refresh' }}
+            </base-button>
+
+            <base-button
+              v-if="!isLoading && !coachesStore.hasCoaches"
+              link
+              to="/register"
+              mode="flat"
+            >
+              Register as Coach
+            </base-button>
+          </div>
+
+          <div v-if="isLoading" class="spinner-container">
+            <base-spinner />
+          </div>
+
+          <div
+            v-else-if="coachesStore.hasCoaches"
+            class="coaches-grid"
           >
-            {{ isLoading ? 'Loading...' : 'Refresh' }}
-          </base-button>
+            <coach-item
+              v-for="coach in filteredCoaches"
+              :key="coach.id"
+              :id="coach.id"
+              :firstName="coach.firstName"
+              :lastName="coach.lastName"
+              :rate="coach.hourlyRate"
+              :areas="coach.areas"
+            />
+          </div>
 
-          <base-button
-            v-if="!isLoading && !coachesStore.hasCoaches"
-            link
-            to="/register"
-            mode="flat"
-          >
-            Register as Coach
-          </base-button>
-        </div>
-
-        <div v-if="isLoading" class="spinner-container">
-          <base-spinner />
-        </div>
-
-        <div
-          v-else-if="coachesStore.hasCoaches"
-          class="coaches-grid"
-        >
-          <coach-item
-            v-for="coach in filteredCoaches"
-            :key="coach.id"
-            :id="coach.id"
-            :firstName="coach.firstName"
-            :lastName="coach.lastName"
-            :rate="coach.hourlyRate"
-            :areas="coach.areas"
-          />
-        </div>
-
-        <h3 v-else class="no-coaches">
-          No coaches found.
-        </h3>
-      </base-card>
-    </section>
+          <h3 v-else class="no-coaches">
+            No coaches found.
+          </h3>
+        </base-card>
+      </section>
+    </div>
   </div>
 </template>
 

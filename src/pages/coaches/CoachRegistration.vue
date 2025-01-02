@@ -4,9 +4,13 @@
 import CoachForm from '@/components/coaches/CoachForm.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import { useCoachesStore } from '@/stores/coaches/index.js'
+import { useRouter } from 'vue-router'
+
 const coachesStore = useCoachesStore();
-const saveData = (data) => {
-  coachesStore.registerCoach(data);
+const router = useRouter();
+const saveData = async(data) => {
+  await coachesStore.registerCoach(data);
+  router.replace('/coaches');
 }
 </script>
 

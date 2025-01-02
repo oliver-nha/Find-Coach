@@ -6,7 +6,11 @@ import TheHeader from '@/components/layout/TheHeader.vue'
 
 <template>
   <TheHeader />
-  <RouterView />
+  <router-view v-slot="{ Component }">
+    <transition name="route" mode="out-in">
+      <component :is="Component" />
+    </transition>
+  </router-view>
 </template>
 
 <style>
@@ -22,5 +26,21 @@ html {
 
 body {
   margin: 0;
+}
+.route-enter-from,
+.route-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.route-enter-active,
+.route-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.route-enter-to,
+.route-leave-from {
+  opacity: 1;
+  transform: scale(1);
 }
 </style>
