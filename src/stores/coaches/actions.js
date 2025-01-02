@@ -26,7 +26,7 @@ export default {
     });
   },
   async loadCoaches() {
-    const response = await fetch(`https://find-coach-c386c-default-rtdb.asia-southeast1.firebasedatabase.app/coaches.json`);
+    const response = await fetch(`https://find-coach-c386c-default-rtdb.asia-southeast1.firebasedatabase.app/coaches.jso`);
     const responseData = await response.json();
     if(!response.ok) {
       // error...

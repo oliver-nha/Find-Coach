@@ -1,3 +1,12 @@
+<template>
+  <button v-if="!link" :class="['base-button', mode]">
+    <slot></slot>
+  </button>
+  <router-link v-else :to="to" :class="['base-button', mode]">
+    <slot></slot>
+  </router-link>
+</template>
+
 <script setup>
 defineProps({
   link: {
@@ -5,36 +14,35 @@ defineProps({
     required: false,
     default: false
   },
-  to:{
+  to: {
     type: String,
     required: false,
     default: '/'
   },
-  mode:{
+  mode: {
     type: String,
     required: false,
-    default: null
+    default: 'primary'
   }
-})
-
+});
 </script>
-
-<template>
-  <button  v-if="!link" :class="mode">
-    <slot></slot>
-  </button>
-  <router-link v-else :to="to" :class="mode">
-    <slot></slot>
-  </router-link>
-</template>
 
 <style scoped>
 a,button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.75rem 1.5rem;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  outline: none;
 }
+
 
 .outline{
   background-color: #0d9488;
@@ -42,39 +50,37 @@ a,button {
   border: none;
   cursor: pointer;
 }
-
 .outline:hover {
   background-color: #0f766e;
 }
-
 .flat {
   background-color: #ccfbf1;
   color: #115e59;
 }
-
 .flat:hover {
   background-color: #99f6e4;
 }
 
 .submit-btn {
-  background-color: #6200ee;
-  color: #ffffff;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.3s ease;
+  background-color: #059669;
+  color: white;
+  font-weight: 600;
+  padding: 0.875rem 1.75rem;
 }
 
 .submit-btn:hover {
-  background-color: #4500b5;
-  transform: scale(1.05);
+  background-color: #047857;
+  transform: translateY(-1px);
 }
 
 .submit-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.3);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.3);
+}
+
+@media (max-width: 640px) {
+  .base-button {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8125rem;
+  }
 }
 </style>
-

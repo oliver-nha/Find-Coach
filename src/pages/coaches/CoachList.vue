@@ -3,50 +3,75 @@ import { useCoachesStore } from '@/stores/coaches/index.js'
 import CoachItem from '@/components/coaches/CoachItem.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import CoachFilter from '@/components/coaches/CoachFilter.vue'
-import { computed, onMounted, reactive } from 'vue'
+import { computed, handleError, onMounted, reactive, ref } from 'vue'
+import BaseDialog from '@/components/ui/BaseDialog.vue'
 
 const coachesStore = useCoachesStore();
-onMounted(() => {
-  coachesStore.loadCoaches();
-});
 const activeFilters = reactive({
   frontend: true,
   backend: true,
-  career: true
-})
+  career: true,
+});
+
+const isLoading = ref(true);
+const error = ref(null);
+
+// Load coaches on component mount
+onMounted(async () => {
+  await loadCoaches();
+  isLoading.value = false;
+});
 
 const setFilter = (updatedFilters) => {
-  activeFilters.frontend = updatedFilters.frontend
-  activeFilters.backend = updatedFilters.backend
-  activeFilters.career = updatedFilters.career
-}
+  Object.assign(activeFilters, updatedFilters);
+};
 
-const filteredCoaches = computed(() => {
-  return coachesStore.coaches.filter(coach => {
-    return (
-      (activeFilters.frontend && coach.areas.includes('frontend')) ||
-      (activeFilters.backend && coach.areas.includes('backend')) ||
-      (activeFilters.career && coach.areas.includes('career'))
+const filteredCoaches = computed(() =>
+  coachesStore.coaches.filter((coach) =>
+    Object.keys(activeFilters).some(
+      (filter) => activeFilters[filter] && coach.areas.includes(filter)
     )
-  })
-})
+  )
+);
 
-const loadCoaches = () => {
-  coachesStore.loadCoaches();
-}
+const loadCoaches = async () => {
+  isLoading.value = true;
+  try {
+    await coachesStore.loadCoaches();
+  } catch (err) {
+    error.value = err.message || 'Something went wrong!';
+  }
+  isLoading.value = false;
+};
+
 </script>
 
 <template>
+  <base-dialog :show="!!error" title="An error occurred!"  @close="error = null">
+ <p>{{ error }}</p>
+  </base-dialog>
   <div class="container">
+    <!-- Filter Section -->
     <coach-filter @change-filter="setFilter" />
+
+    <!-- Coaches Section -->
     <section class="coaches-section">
       <base-card>
+        <!-- Controls -->
         <div class="controls">
           <base-button mode="outline" @click="loadCoaches">Refresh</base-button>
-          <base-button link to="/register" mode="flat">Register as Coach</base-button>
+          <base-button v-if="!isLoading && !coachesStore.hasCoaches" link to="/register" mode="flat">Register as Coach</base-button>
         </div>
-        <div v-if="filteredCoaches.length > 0" class="coaches-grid">
+
+        <!-- Loading Spinner -->
+        <div v-if="isLoading">
+          <base-spinner />
+        </div>
+
+        <!-- Filtered Coaches -->
+        <div v-else-if="coachesStore.hasCoaches && !isLoading" class="coaches-grid">
           <coach-item
             v-for="coach in filteredCoaches"
             :key="coach.id"
@@ -57,6 +82,7 @@ const loadCoaches = () => {
             :areas="coach.areas"
           />
         </div>
+        <!-- Fallback: No Coaches Found -->
         <h3 v-else class="no-coaches">No coaches found.</h3>
       </base-card>
     </section>
