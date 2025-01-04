@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 
-const { title}= defineProps(['type', 'title']);
+const { title }= defineProps(['type', 'title']);
 const text = computed(() => title.toUpperCase());
 </script>
 
